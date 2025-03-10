@@ -71,6 +71,7 @@
     <div id="feedback" class="hidden"></div>
 
     <script>
+        // Training data for each skill
         const trainingData = {
             communication: {
                 title: "Communication Skills",
@@ -110,6 +111,7 @@
             }
         };
 
+        // Add event listeners
         document.getElementById("startButton").addEventListener("click", startTraining);
         document.getElementById("submitQuiz").addEventListener("click", submitQuiz);
 
@@ -121,6 +123,12 @@
             }
 
             const data = trainingData[skill];
+            if (!data) {
+                alert("Invalid skill selected.");
+                return;
+            }
+
+            // Display training content
             document.getElementById("skill-title").textContent = data.title;
             document.getElementById("skill-description").textContent = data.description;
             document.getElementById("training-content").style.display = "block";
