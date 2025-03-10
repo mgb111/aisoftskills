@@ -35,7 +35,7 @@
     <div id="feedback"></div>
 
     <!-- AR Section -->
-    <a-scene embedded arjs>
+    <a-scene embedded arjs='sourceType: webcam;'>
         <a-marker preset="hiro">
             <a-entity id="ai-avatar" position="0 0 0" scale="0.5 0.5 0.5"
                       gltf-model="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
@@ -53,6 +53,11 @@
 
         function startTraining() {
             const skill = document.getElementById("skill").value;
+            if (!skill) {
+                alert("Please select a soft skill to begin training.");
+                return;
+            }
+
             let responseText = "";
             let quizQuestion = "";
             let options = "";
@@ -91,7 +96,10 @@
             document.getElementById("quiz").classList.remove("hidden");
             
             // Trigger AI avatar animation
-            document.getElementById("ai-avatar").setAttribute("animation-mixer", "clip: *");
+            const avatar = document.getElementById("ai-avatar");
+            if (avatar) {
+                avatar.setAttribute("animation-mixer", "clip: *");
+            }
         }
 
         function submitQuiz() {
