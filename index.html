@@ -3,17 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Soft Skills Training (AR)</title>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js/aframe/build/aframe-ar.min.js"></script>
+    <title>Interactive Soft Skills Training</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; text-align: center; }
-        #response, #quiz, #feedback { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
-        .hidden { display: none; }
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        #training-content, #quiz, #feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        #quiz-options {
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #3498db;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <h1>AI Soft Skills Training (AR)</h1>
+    <h1>Interactive Soft Skills Training</h1>
     <label for="skill">Select a Soft Skill:</label>
     <select id="skill">
         <option value="">-- Choose --</option>
@@ -22,34 +55,63 @@
         <option value="problem-solving">Problem-Solving</option>
     </select>
     <button id="startButton">Start Training</button>
-    
-    <div id="response"></div>
-    
+
+    <div id="training-content">
+        <h2 id="skill-title"></h2>
+        <p id="skill-description"></p>
+    </div>
+
     <div id="quiz" class="hidden">
         <h2>Quiz</h2>
         <p id="quiz-question"></p>
         <div id="quiz-options"></div>
         <button id="submitQuiz">Submit Answer</button>
     </div>
-    
-    <div id="feedback"></div>
 
-    <!-- AR Section -->
-    <a-scene embedded arjs='sourceType: webcam;'>
-        <a-marker preset="hiro">
-            <a-entity id="ai-avatar" position="0 0 0" scale="0.5 0.5 0.5"
-                      gltf-model="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
-                      animation-mixer>
-            </a-entity>
-        </a-marker>
-        <a-entity camera></a-entity>
-    </a-scene>
+    <div id="feedback" class="hidden"></div>
 
     <script>
-        window.onload = function() {
-            document.getElementById("startButton").addEventListener("click", startTraining);
-            document.getElementById("submitQuiz").addEventListener("click", submitQuiz);
-        }
+        const trainingData = {
+            communication: {
+                title: "Communication Skills",
+                description: "Effective communication involves clarity, active listening, and empathy. Practice by summarizing conversations and asking clarifying questions.",
+                quiz: {
+                    question: "What is a key component of active listening?",
+                    options: [
+                        { text: "Interrupting the speaker", correct: false },
+                        { text: "Summarizing what was said", correct: true },
+                        { text: "Talking over the speaker", correct: false }
+                    ]
+                }
+            },
+            teamwork: {
+                title: "Teamwork Skills",
+                description: "Teamwork requires collaboration, trust, and adaptability. Engage in group activities and provide constructive feedback to peers.",
+                quiz: {
+                    question: "What is essential for effective teamwork?",
+                    options: [
+                        { text: "Avoiding communication", correct: false },
+                        { text: "Trust and collaboration", correct: true },
+                        { text: "Ignoring feedback", correct: false }
+                    ]
+                }
+            },
+            problem-solving: {
+                title: "Problem-Solving Skills",
+                description: "To enhance problem-solving, define issues clearly, brainstorm solutions, and evaluate outcomes. Try using the 5 Whys technique to find root causes.",
+                quiz: {
+                    question: "What is the first step in problem-solving?",
+                    options: [
+                        { text: "Jumping to conclusions", correct: false },
+                        { text: "Defining the problem", correct: true },
+                        { text: "Blaming others", correct: false }
+                    ]
+                }
+            }
+        };
+
+        document.getElementById("startButton").addEventListener("click", startTraining);
+        document.getElementById("submitQuiz").addEventListener("click", submitQuiz);
 
         function startTraining() {
             const skill = document.getElementById("skill").value;
@@ -58,65 +120,38 @@
                 return;
             }
 
-            let responseText = "";
-            let quizQuestion = "";
-            let options = "";
-            
-            switch(skill) {
-                case "communication":
-                    responseText = "Effective communication involves clarity, active listening, and empathy. Practice by summarizing conversations and asking clarifying questions.";
-                    quizQuestion = "What is a key component of active listening?";
-                    options = "<input type='radio' name='q1' value='a'> Interrupting the speaker<br>
-                               <input type='radio' name='q1' value='b'> Summarizing what was said<br>
-                               <input type='radio' name='q1' value='c'> Talking over the speaker";
-                    break;
-                case "teamwork":
-                    responseText = "Teamwork requires collaboration, trust, and adaptability. Engage in group activities and provide constructive feedback to peers.";
-                    quizQuestion = "What is essential for effective teamwork?";
-                    options = "<input type='radio' name='q1' value='a'> Avoiding communication<br>
-                               <input type='radio' name='q1' value='b'> Trust and collaboration<br>
-                               <input type='radio' name='q1' value='c'> Ignoring feedback";
-                    break;
-                case "problem-solving":
-                    responseText = "To enhance problem-solving, define issues clearly, brainstorm solutions, and evaluate outcomes. Try using the 5 Whys technique to find root causes.";
-                    quizQuestion = "What is the first step in problem-solving?";
-                    options = "<input type='radio' name='q1' value='a'> Jumping to conclusions<br>
-                               <input type='radio' name='q1' value='b'> Defining the problem<br>
-                               <input type='radio' name='q1' value='c'> Blaming others";
-                    break;
-                default:
-                    responseText = "Please select a soft skill to begin training.";
-                    quizQuestion = "";
-                    options = "";
-            }
-            
-            document.getElementById("response").innerText = responseText;
-            document.getElementById("quiz-question").innerText = quizQuestion;
-            document.getElementById("quiz-options").innerHTML = options;
-            document.getElementById("quiz").classList.remove("hidden");
-            
-            // Trigger AI avatar animation
-            const avatar = document.getElementById("ai-avatar");
-            if (avatar) {
-                avatar.setAttribute("animation-mixer", "clip: *");
-            }
+            const data = trainingData[skill];
+            document.getElementById("skill-title").textContent = data.title;
+            document.getElementById("skill-description").textContent = data.description;
+            document.getElementById("training-content").style.display = "block";
+
+            // Set up quiz
+            document.getElementById("quiz-question").textContent = data.quiz.question;
+            const optionsHtml = data.quiz.options.map((option, index) => `
+                <label>
+                    <input type="radio" name="quiz-option" value="${index}">
+                    ${option.text}
+                </label><br>
+            `).join("");
+            document.getElementById("quiz-options").innerHTML = optionsHtml;
+            document.getElementById("quiz").style.display = "block";
+            document.getElementById("feedback").style.display = "none";
         }
 
         function submitQuiz() {
-            const selectedOption = document.querySelector('input[name="q1"]:checked');
+            const selectedOption = document.querySelector('input[name="quiz-option"]:checked');
             if (!selectedOption) {
-                document.getElementById("feedback").innerText = "Please select an answer.";
+                alert("Please select an answer.");
                 return;
             }
-            
-            let feedbackText = "";
-            if (selectedOption.value === "b") {
-                feedbackText = "Correct! You are on the right track.";
-            } else {
-                feedbackText = "Incorrect. Try reviewing the material again.";
-            }
-            
-            document.getElementById("feedback").innerText = feedbackText;
+
+            const skill = document.getElementById("skill").value;
+            const selectedIndex = parseInt(selectedOption.value);
+            const isCorrect = trainingData[skill].quiz.options[selectedIndex].correct;
+
+            const feedback = document.getElementById("feedback");
+            feedback.textContent = isCorrect ? "✅ Correct! You are on the right track." : "❌ Incorrect. Try reviewing the material again.";
+            feedback.style.display = "block";
         }
     </script>
 </body>
