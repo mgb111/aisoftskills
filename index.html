@@ -21,7 +21,7 @@
         <option value="teamwork">Teamwork</option>
         <option value="problem-solving">Problem-Solving</option>
     </select>
-    <button onclick="startTraining()">Start Training</button>
+    <button id="startButton">Start Training</button>
     
     <div id="response"></div>
     
@@ -29,7 +29,7 @@
         <h2>Quiz</h2>
         <p id="quiz-question"></p>
         <div id="quiz-options"></div>
-        <button onclick="submitQuiz()">Submit Answer</button>
+        <button id="submitQuiz">Submit Answer</button>
     </div>
     
     <div id="feedback"></div>
@@ -38,7 +38,7 @@
     <a-scene embedded arjs>
         <a-marker preset="hiro">
             <a-entity id="ai-avatar" position="0 0 0" scale="0.5 0.5 0.5"
-                      gltf-model="https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Models/2.0/AnimatedCube/glTF/AnimatedCube.gltf"
+                      gltf-model="https://modelviewer.dev/shared-assets/models/Astronaut.glb"
                       animation-mixer>
             </a-entity>
         </a-marker>
@@ -46,6 +46,11 @@
     </a-scene>
 
     <script>
+        window.onload = function() {
+            document.getElementById("startButton").addEventListener("click", startTraining);
+            document.getElementById("submitQuiz").addEventListener("click", submitQuiz);
+        }
+
         function startTraining() {
             const skill = document.getElementById("skill").value;
             let responseText = "";
@@ -86,7 +91,7 @@
             document.getElementById("quiz").classList.remove("hidden");
             
             // Trigger AI avatar animation
-            document.getElementById("ai-avatar").setAttribute("animation-mixer", "clip: Wave");
+            document.getElementById("ai-avatar").setAttribute("animation-mixer", "clip: *");
         }
 
         function submitQuiz() {
