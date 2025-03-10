@@ -1,97 +1,166 @@
-document.addEventListener("DOMContentLoaded", function () {
-    // Training data for each skill
-    const trainingData = {
-        communication: {
-            title: "Communication Skills",
-            description: "Effective communication involves clarity, active listening, and empathy. Practice by summarizing conversations and asking clarifying questions.",
-            quiz: {
-                question: "What is a key component of active listening?",
-                options: [
-                    { text: "Interrupting the speaker", correct: false },
-                    { text: "Summarizing what was said", correct: true },
-                    { text: "Talking over the speaker", correct: false }
-                ]
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Soft Skills Training</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+        }
+        #training-content, #quiz, #feedback {
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+        #quiz-options {
+            margin: 10px 0;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #3498db;
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Interactive Soft Skills Training</h1>
+    <label for="skill">Select a Soft Skill:</label>
+    <select id="skill">
+        <option value="">-- Choose --</option>
+        <option value="communication">Communication</option>
+        <option value="teamwork">Teamwork</option>
+        <option value="problem-solving">Problem-Solving</option>
+    </select>
+    <button id="startButton">Start Training</button>
+
+    <div id="training-content">
+        <h2 id="skill-title"></h2>
+        <p id="skill-description"></p>
+    </div>
+
+    <div id="quiz" class="hidden">
+        <h2>Quiz</h2>
+        <p id="quiz-question"></p>
+        <div id="quiz-options"></div>
+        <button id="submitQuiz">Submit Answer</button>
+    </div>
+
+    <div id="feedback" class="hidden"></div>
+
+    <script>
+        // Training data for each skill
+        const trainingData = {
+            communication: {
+                title: "Communication Skills",
+                description: "Effective communication involves clarity, active listening, and empathy. Practice by summarizing conversations and asking clarifying questions.",
+                quiz: {
+                    question: "What is a key component of active listening?",
+                    options: [
+                        { text: "Interrupting the speaker", correct: false },
+                        { text: "Summarizing what was said", correct: true },
+                        { text: "Talking over the speaker", correct: false }
+                    ]
+                }
+            },
+            teamwork: {
+                title: "Teamwork Skills",
+                description: "Teamwork requires collaboration, trust, and adaptability. Engage in group activities and provide constructive feedback to peers.",
+                quiz: {
+                    question: "What is essential for effective teamwork?",
+                    options: [
+                        { text: "Avoiding communication", correct: false },
+                        { text: "Trust and collaboration", correct: true },
+                        { text: "Ignoring feedback", correct: false }
+                    ]
+                }
+            },
+            problem-solving: {
+                title: "Problem-Solving Skills",
+                description: "To enhance problem-solving, define issues clearly, brainstorm solutions, and evaluate outcomes. Try using the 5 Whys technique to find root causes.",
+                quiz: {
+                    question: "What is the first step in problem-solving?",
+                    options: [
+                        { text: "Jumping to conclusions", correct: false },
+                        { text: "Defining the problem", correct: true },
+                        { text: "Blaming others", correct: false }
+                    ]
+                }
             }
-        },
-        teamwork: {
-            title: "Teamwork Skills",
-            description: "Teamwork requires collaboration, trust, and adaptability. Engage in group activities and provide constructive feedback to peers.",
-            quiz: {
-                question: "What is essential for effective teamwork?",
-                options: [
-                    { text: "Avoiding communication", correct: false },
-                    { text: "Trust and collaboration", correct: true },
-                    { text: "Ignoring feedback", correct: false }
-                ]
+        };
+
+        // Add event listeners
+        document.getElementById("startButton").addEventListener("click", startTraining);
+        document.getElementById("submitQuiz").addEventListener("click", submitQuiz);
+
+        function startTraining() {
+            const skill = document.getElementById("skill").value;
+            if (!skill) {
+                alert("Please select a soft skill to begin training.");
+                return;
             }
-        },
-        problem-solving: {
-            title: "Problem-Solving Skills",
-            description: "To enhance problem-solving, define issues clearly, brainstorm solutions, and evaluate outcomes. Try using the 5 Whys technique to find root causes.",
-            quiz: {
-                question: "What is the first step in problem-solving?",
-                options: [
-                    { text: "Jumping to conclusions", correct: false },
-                    { text: "Defining the problem", correct: true },
-                    { text: "Blaming others", correct: false }
-                ]
+
+            const data = trainingData[skill];
+            if (!data) {
+                alert("Invalid skill selected.");
+                return;
             }
-        }
-    };
 
-    // Ensure elements are loaded before adding event listeners
-    const startButton = document.getElementById("startButton");
-    const submitQuizButton = document.getElementById("submitQuiz");
+            // Display training content
+            document.getElementById("skill-title").textContent = data.title;
+            document.getElementById("skill-description").textContent = data.description;
+            document.getElementById("training-content").style.display = "block";
 
-    if (startButton && submitQuizButton) {
-        startButton.addEventListener("click", startTraining);
-        submitQuizButton.addEventListener("click", submitQuiz);
-    }
-
-    function startTraining() {
-        const skill = document.getElementById("skill").value;
-        if (!skill) {
-            alert("Please select a soft skill to begin training.");
-            return;
-        }
-
-        const data = trainingData[skill];
-        if (!data) {
-            alert("Invalid skill selected.");
-            return;
+            // Set up quiz
+            document.getElementById("quiz-question").textContent = data.quiz.question;
+            const optionsHtml = data.quiz.options.map((option, index) => `
+                <label>
+                    <input type="radio" name="quiz-option" value="${index}">
+                    ${option.text}
+                </label><br>
+            `).join("");
+            document.getElementById("quiz-options").innerHTML = optionsHtml;
+            document.getElementById("quiz").style.display = "block";
+            document.getElementById("feedback").style.display = "none";
         }
 
-        // Display training content
-        document.getElementById("skill-title").textContent = data.title;
-        document.getElementById("skill-description").textContent = data.description;
-        document.getElementById("training-content").style.display = "block";
+        function submitQuiz() {
+            const selectedOption = document.querySelector('input[name="quiz-option"]:checked');
+            if (!selectedOption) {
+                alert("Please select an answer.");
+                return;
+            }
 
-        // Set up quiz
-        document.getElementById("quiz-question").textContent = data.quiz.question;
-        const optionsHtml = data.quiz.options.map((option, index) => `
-            <label>
-                <input type="radio" name="quiz-option" value="${index}">
-                ${option.text}
-            </label><br>
-        `).join("");
-        document.getElementById("quiz-options").innerHTML = optionsHtml;
-        document.getElementById("quiz").style.display = "block";
-        document.getElementById("feedback").style.display = "none";
-    }
+            const skill = document.getElementById("skill").value;
+            const selectedIndex = parseInt(selectedOption.value);
+            const isCorrect = trainingData[skill].quiz.options[selectedIndex].correct;
 
-    function submitQuiz() {
-        const selectedOption = document.querySelector('input[name="quiz-option"]:checked');
-        if (!selectedOption) {
-            alert("Please select an answer.");
-            return;
+            const feedback = document.getElementById("feedback");
+            feedback.textContent = isCorrect ? "✅ Correct! You are on the right track." : "❌ Incorrect. Try reviewing the material again.";
+            feedback.style.display = "block";
         }
-
-        const skill = document.getElementById("skill").value;
-        const selectedIndex = parseInt(selectedOption.value);
-        const isCorrect = trainingData[skill].quiz.options[selectedIndex].correct;
-
-        const feedback = document.getElementById("feedback");
-        feedback.textContent = isCorrect ? "✅ Correct! You are on the right track." : "❌ Incorrect. Try reviewing the material again.";
-        feedback.style.display = "block";
-    }
-});
+    </script>
+</body>
+</html>
