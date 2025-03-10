@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Soft Skills Training (AR)</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js/aframe/build/aframe-ar.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; text-align: center; }
+        #response, #quiz, #feedback { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <h1>AI Soft Skills Training (AR)</h1>
+    <label for="skill">Select a Soft Skill:</label>
+    <select id="skill">
+        <option value="">-- Choose --</option>
+        <option value="communication">Communication</option>
+        <option value="teamwork">Teamwork</option>
+        <option value="problem-solving">Problem-Solving</option>
+    </select>
+    <button onclick="startTraining()">Start Training</button>
+    
+    <div id="response"></div>
+    
+    <div id="quiz" class="hidden">
+        <h2>Quiz</h2>
+        <p id="quiz-question"></p>
+        <div id="quiz-options"></div>
+        <button onclick="submitQuiz()">Submit Answer</button>
+    </div>
+    
+    <div id="feedback"></div>
+
+    <!-- AR Section -->
+    <a-scene embedded arjs>
+        <a-marker preset="hiro">
+            <a-entity id="ai-avatar" position="0 0 0" scale="0.5 0.5 0.5"
+                      gltf-model="https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Models/2.0/AnimatedCube/glTF/AnimatedCube.gltf"
+                      animation-mixer>
+            </a-entity>
+        </a-marker>
+        <a-entity camera></a-entity>
+    </a-scene>
+
+    <script>
+        function startTraining() {
+            const skill = document.getElementById("skill").value;
+            let responseText = "";
+            let quizQuestion = "";
+            let options = "";
+            
+            switch(skill) {
+                case "communication":
+                    responseText = "Effective communication involves clarity, active listening, and empathy. Practice by summarizing conversations and asking clarifying questions.";
+                    quizQuestion = "What is a key component of active listening?";
+                    options = "<input type='radio' name='q1' value='a'> Interrupting the speaker<br>
+                               <input type='radio' name='q1' value='b'> Summarizing what was said<br>
+                               <input type='radio' name='q1' value='c'> Talking over the speaker";
+                    break;
+                case "teamwork":
+                    responseText = "Teamwork requires collaboration, trust, and adaptability. Engage in group activities and provide constructive feedback to peers.";
+                    quizQuestion = "What is essential for effective teamwork?";
+                    options = "<input type='radio' name='q1' value='a'> Avoiding communication<br>
+                               <input type='radio' name='q1' value='b'> Trust and collaboration<br>
+                               <input type='radio' name='q1' value='c'> Ignoring feedback";
+                    break;
+                case "problem-solving":
+                    responseText = "To enhance problem-solving, define issues clearly, brainstorm solutions, and evaluate outcomes. Try using the 5 Whys technique to find root causes.";
+                    quizQuestion = "What is the first step in problem-solving?";
+                    options = "<input type='radio' name='q1' value='a'> Jumping to conclusions<br>
+                               <input type='radio' name='q1' value='b'> Defining the problem<br>
+                               <input type='radio' name='q1' value='c'> Blaming others";
+                    break;
+                default:
+                    responseText = "Please select a soft skill to begin training.";
+                    quizQuestion = "";
+                    options = "";
+            }
+            
+            document.getElementById("response").innerText = responseText;
+            document.getElementById("quiz-question").innerText = quizQuestion;
+            document.getElementById("quiz-options").innerHTML = options;
+            document.getElementById("quiz").classList.remove("hidden");
+            
+            // Trigger AI avatar animation
+            document.getElementById("ai-avatar").setAttribute("animation-mixer", "clip: Wave");
+        }
+
+        function submitQuiz() {
+            const selectedOption = document.querySelector('input[name="q1"]:checked');
+            if (!selectedOption) {
+                document.getElementById("feedback").innerText = "Please select an answer.";
+                return;
+            }
+            
+            let feedbackText = "";
+            if (selectedOption.value === "b") {
+                feedbackText = "Correct! You are on the right track.";
+            } else {
+                feedbackText = "Incorrect. Try reviewing the material again.";
+            }
+            
+            document.getElementById("feedback").innerText = feedbackText;
+        }
+    </script>
+</body>
+</html>
